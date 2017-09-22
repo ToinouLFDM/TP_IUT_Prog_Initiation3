@@ -1,3 +1,9 @@
+#ADD BY MOUSSE
+GG=gcc
+
+
+
+
 #changer le nom des deux lignes suivantes si nécessaire
 SOURCE = exo_11.c
 OUTPUT = resultat

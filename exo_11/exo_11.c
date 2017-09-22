@@ -1,6 +1,14 @@
 #include "../lib/libgraphique.h"
 #include<stdio.h>
+#include<math.h>
 
+void Carre(Point p1, Couleur couleur_);
+void quadrillage(int W,int H);
+float yoloabs(float a);
+typedef struct CASE {
+	Point position;
+	Couleur c;
+}Case;
 int main(int argc, char *argv[])
 {	
 	// début de la session graphique
@@ -13,31 +21,53 @@ int main(int argc, char *argv[])
 	int i;
 	int j;
 	int count =0;
+	Case tableau[W/20][H/20];
+	
 	for (i=0;i< W;i+=20)
 	{
 		for (j=0;j<H;j+=20)
 		{
 			count +=1;
-			Point p={i,j};
+			Point posCarre={i,j};
+			tableau[i/20][j/20].position=posCarre;
 			if((count%2)==0)
 			{
-				carre(p,vert);
+				tableau[i/20][j/20].c=vert;
+				Carre(posCarre,vert);
 			}
 			else
 			{
-				carre(p,bleu);
+				tableau[i/20][j/20].c=bleu;
+				Carre(posCarre,bleu);
 			}
 		}
+		count +=1;
 	}
-
-	int i;
-	for (i=0; i<10; i++)
+	actualiser();
+	
+	//Initilisation 1er tour
+	Point clic=attendre_clic();
+	Point player={clic.x-(clic.x%20),clic.y-(clic.y%20)};
+	Carre(player,rouge);
+	actualiser();
+	Carre(player,tableau[player.x/20][player.y/20].c);
+	//boucle du jeu
+	int life =1;
+	while (life >=1)
 	{
-		Point P1=attendre_clic();
-		Point p1={P1.x-(P1.x%20)+1,P1.y-(P1.y%20)+1};
-		Carre(p1,rouge);
+		
+		clic=attendre_clic();
+		//if ( (fabs(player.x-((clic.x/20)*20)) <=2) && (fabs(player.y-((clic.y/20)*20)<=2))) 
+		if( (yoloabs(tableau[clic.x/20][clic.y/20].position.x-player.x)<21) && (yoloabs(tableau[clic.x/20][clic.y/20].position.y-player.y)<21))
+		{
+			//printf("%f,%f",fabs(player.x-(clic.x%20)),fabs(player.y-(clic.y%20)));
+			player.x=clic.x-(clic.x%20);
+			player.y=clic.y-(clic.y%20);
+		}
+		
+		Carre(player,rouge);
 		actualiser();
-		Carre(p1,noir);
+		Carre(player,tableau[player.x/20][player.y/20].c);
 	}
 	
 	
@@ -50,11 +80,19 @@ int main(int argc, char *argv[])
     	fermer_fenetre();
     	return 0;
 }
+
+float yoloabs (float a){
+	if (a < 0){
+		return -a;
+	}
+	return a;
+}
+
 void Carre(Point p1, Couleur couleur_)
 	{	
 		
 		
-		dessiner_rectangle(p1, 19, 19,couleur_);
+		dessiner_rectangle(p1, 20, 20,couleur_);
 	}
 void quadrillage(int W,int H)
 	{
