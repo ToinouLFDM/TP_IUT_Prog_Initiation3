@@ -44,7 +44,16 @@ int main(int argc, char *argv[])
 		count +=1;
 	}
 	actualiser();
+	//init monster
+	int a=entier_aleatoire(W/20);	
+	int b=entier_aleatoire(H/20); 
+	//int Point monster= {a*20;b*20};
 	
+	tableau[a][b].position.x=a*20;
+	tableau[a][b].position.y=b*20;
+	tableau[a][b].c=jaune;
+	Carre(tableau[a][b].position,tableau[a][b].c);
+	actualiser();
 	//Initilisation 1er tour
 	Point clic=attendre_clic();
 	Point player={clic.x-(clic.x%20),clic.y-(clic.y%20)};
@@ -57,8 +66,8 @@ int main(int argc, char *argv[])
 	{
 		
 		clic=attendre_clic();
-		//if ( (fabs(player.x-((clic.x/20)*20)) <=2) && (fabs(player.y-((clic.y/20)*20)<=2))) 
-		if( (yoloabs(tableau[clic.x/20][clic.y/20].position.x-player.x)<21) && (yoloabs(tableau[clic.x/20][clic.y/20].position.y-player.y)<21))
+		if ( (fabs((player.x/20)-(clic.x/20)) <=1) && (fabs((player.y/20)-(clic.y/20))<=1) )
+		//if( (yoloabs(tableau[clic.x/20][clic.y/20].position.x-player.x)<21) && (yoloabs(tableau[clic.x/20][clic.y/20].position.y-player.y)<21))
 		{
 			//printf("%f,%f",fabs(player.x-(clic.x%20)),fabs(player.y-(clic.y%20)));
 			player.x=clic.x-(clic.x%20);
