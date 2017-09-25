@@ -4,10 +4,12 @@
 
 void Carre(Point p1, Couleur couleur_);
 void quadrillage(int W,int H);
+Point pathfindingMonster(Point p, Point m);
 float yoloabs(float a);
 typedef struct CASE {
 	Point position;
 	Couleur c;
+	int valeur;
 }Case;
 int main(int argc, char *argv[])
 {	
@@ -28,6 +30,7 @@ int main(int argc, char *argv[])
 		for (j=0;j<H;j+=20)
 		{
 			count +=1;
+			tableau[i/20][j/20].valeur=count;
 			Point posCarre={i,j};
 			tableau[i/20][j/20].position=posCarre;
 			if((count%2)==0)
@@ -47,7 +50,7 @@ int main(int argc, char *argv[])
 	//init monster
 	int a=entier_aleatoire(W/20);	
 	int b=entier_aleatoire(H/20); 
-	//int Point monster= {a*20;b*20};
+	Point monster= {a*20,b*20};
 	
 	tableau[a][b].position.x=a*20;
 	tableau[a][b].position.y=b*20;
@@ -69,13 +72,27 @@ int main(int argc, char *argv[])
 		if ( (fabs((player.x/20)-(clic.x/20)) <=1) && (fabs((player.y/20)-(clic.y/20))<=1) )
 		//if( (yoloabs(tableau[clic.x/20][clic.y/20].position.x-player.x)<21) && (yoloabs(tableau[clic.x/20][clic.y/20].position.y-player.y)<21))
 		{
-			//printf("%f,%f",fabs(player.x-(clic.x%20)),fabs(player.y-(clic.y%20)));
+			
 			player.x=clic.x-(clic.x%20);
 			player.y=clic.y-(clic.y%20);
+			//deplacement monster
+			tableau[monster.x/20][monster.y/20].c=((tableau[monster.x/20][monster.y/20].valeur%2)==0)?vert:bleu;
+			Carre(monster,tableau[monster.x/20][monster.y/20].c);
+			monster=pathfindingMonster(player,monster);
+			tableau[monster.x/20][monster.y/20].c=jaune;
+			Carre(monster,jaune);
 		}
 		
+		
+		//depaclement joeur
 		Carre(player,rouge);
 		actualiser();
+		//Game Over
+		if (player.x==monster.x && player.y==monster.y)
+		{
+			life=0;
+		}
+
 		Carre(player,tableau[player.x/20][player.y/20].c);
 	}
 	
@@ -90,6 +107,13 @@ int main(int argc, char *argv[])
     	return 0;
 }
 
+Point pathfindingMonster(Point p, Point m)
+	{
+	
+	m.x+=((p.x-m.x)>0)?20:(((p.x-m.x)==0)?0:(-20));
+	m.y+=((p.y-m.y)>0)?20:(((p.y-m.y)==0)?0:(-20));
+	return m;
+	}
 float yoloabs (float a){
 	if (a < 0){
 		return -a;
