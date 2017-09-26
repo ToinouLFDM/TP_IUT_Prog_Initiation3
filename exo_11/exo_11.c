@@ -11,7 +11,7 @@ typedef struct CASE {
 	Point position;
 	Couleur c;
 	int valeur;
-	int wall[3];
+	int wall[4];
 }Case;
 int main(int argc, char *argv[])
 {	
@@ -22,11 +22,27 @@ int main(int argc, char *argv[])
     	
 	//init damier
 	//quadrillage(W,H);
-	int i;
-	int j;
+	int i=0;
+	int j=0;
 	int count =0;
-	Case tableau[W/20][H/20];
-	
+	Case tableau[(W/20)+1][H/20];
+	int N=0;
+	while (i<W)
+	{
+		while (j<H)
+		{
+			while (N<4)
+			{
+				tableau[i/20][j/20].wall[N]=0;
+				N++;
+			}
+			N=0;
+			j+=20;
+		}
+		j=0;
+		i+=20;
+	}
+	printf("Etape 1  \n");
 	for (i=0;i< W;i+=20)
 	{
 		for (j=0;j<H;j+=20)
@@ -35,12 +51,12 @@ int main(int argc, char *argv[])
 			int I;
 			for (I=0; I<4;I++)
 			{
-				if(tableau[i/20][j/20].wall[I]>2)
+				if(tableau[i/20][j/20].wall[I]!=1 && tableau[i/20][j/20].wall[I]!=2)
 				{
-					tableau[i/20][j/20].wall[I]=entier_aleatoire(400)+1;
+					tableau[i/20][j/20].wall[I]=entier_aleatoire(5)+1;
 				}
 			}
-
+			
 			
 			
 			count +=1;
@@ -72,20 +88,21 @@ int main(int argc, char *argv[])
 					{
 						tableau[(i/20)-1][j/20].wall[I+2]=1;
 					}
-					if(((j/20)+1)>0 && I==2)
+					if(((j/20)+1)<(H/20) && I==2)
 					{
 						tableau[i/20][(j/20)+1].wall[I-2]=1;
 					}
-					if( ((i/20)+1)>0 && I==3)
+					if( ((i/20)+1)>(W/20) && I==3)
 					{
 						tableau[(i/20)+1][j/20].wall[I-2]=1;
 					}
-					Wall(posCarre, I);
+					//Wall(posCarre, I);
 				}
-				if(tableau[i/20][j/20].wall[I]>1)
+				if(tableau[i/20][j/20].wall[I]>2)
 				{
 					if(((j/20)-1)>0 && I==0)
 					{
+
 						tableau[i/20][(j/20)-1].wall[I+2]=2;
 					}
 					if( ((i/20)-1)>0 && I==1)
@@ -100,34 +117,60 @@ int main(int argc, char *argv[])
 					{
 						tableau[(i/20)+1][j/20].wall[I-2]=2;
 					}
+					tableau[i/20][j/20].wall[I]=2;
 					
 				}
 			}
 			
 		}
+		
 		count +=1;
+		printf("Etape 2 %d \n",i/20);
 	}
 	
 
 	int n=0;
 	//init wall
-	i=0;
-	for(i=0;i<W;i+=20)
+	
+	for(j=0;j<W;j+=20)
 	{
-		for (j=0;j<H;j+=20)
+		for (i=0;i<H;i+=20)
 		{
 			
 			while(n<4)
+	
 			{
-				//if (tableau[i/20][j/20].wall[n]==1)
-				//{
-					Point posWall={i,j};
-					//posWall.x=i*20;
-					//posWall.y=j*20;
-					//Wall(posWall,n);
-				//}
+				
+				if (tableau[i/20][j/20].wall[n]==1)
+				{
+				        Point posWall={i,j};
+					posWall.x=i;
+					posWall.y=j;
+					Wall(posWall, n);
+					printf("%d,%d,%d,%d  \n",tableau[i/20][j/20].wall[n],posWall.x/20,posWall.y/20,n);
+				
+					/*if(((j/20)-1)>0 && n==0)
+					{
+						tableau[i/20][(j/20)-1].wall[n+2]=1;
+					}
+					if( ((i/20)-1)>0 && n==1)
+					{
+						tableau[(i/20)-1][j/20].wall[n+2]=1;
+					}
+					if(((j/20)+1)>0 && n==2)
+					{
+						tableau[i/20][(j/20)+1].wall[n-2]=1;
+					}
+					if( ((i/20)+1)>0 && n==3)
+					{
+						tableau[(i/20)+1][j/20].wall[n-2]=1;
+					}*/
+					
+					
+				}
 				n+=1;
 			}
+			n=0;
 		}
 	}
 	actualiser();
@@ -138,10 +181,10 @@ int main(int argc, char *argv[])
 	
 	
 	
-	tableau[a][b].position.x=a*20;
-	tableau[a][b].position.y=b*20;
+	//tableau[a][b].position.x=a*20;
+	//tableau[a][b].position.y=b*20;
 	
-	Carre(tableau[a][b].position,jaune);
+	Carre(monster,jaune);
 	actualiser();
 	//Initilisation 1er tour
 	Point clic=attendre_clic();
@@ -154,9 +197,34 @@ int main(int argc, char *argv[])
 	while (life >=1)
 	{
 		int I=0;
+		for(j=0;j<W;j+=20)
+		{
+			for (i=0;i<H;i+=20)
+			{
+			
+				while(n<4)
+	
+				{
+				
+					if (tableau[i/20][j/20].wall[n]==1)
+					{
+						Point posWall={i,j};
+						posWall.x=i;
+						posWall.y=j;
+						printf(" yolo %d,%d,%d,%d  \n",tableau[i/20][j/20].wall[n],posWall.x/20,posWall.y/20,n);	
+					}
+					n+=1;
+				}
+				n=0;
+			}
+		}
+		printf("Etape 2 %d,%d,%d,%d,%d,%d \n",tableau[player.x/20][player.y/20].wall[0],tableau[player.x/20][player.y/20].wall[1],tableau[player.x/20][player.y/20].wall[2],tableau[player.x/20][player.y/20].wall[3],player.x/20,player.y/20);
 		clic=attendre_clic();
-		int a=fabs((player.x/20)-(clic.x/20)), b=fabs((player.y/20)-(clic.y/20));
-		if ( a<=1 && b<=1 && a!=b  )
+		
+		int c=(player.x/20)-(clic.x/20) , d=(player.y/20)-(clic.y/20) ;
+		int a=fabs(c), b=fabs(d);
+		if ( ( (c==1 && (tableau[player.x/20][player.y/20].wall[1]>1  )&& d==0) || (c==-1 && (tableau[player.x/20][player.y/20].wall[3]>1) && d==0) || (d==1 && (tableau[player.x/20][player.y/20].wall[0]>1  )&& c==0) || (d==-1 && (tableau[player.x/20][player.y/20].wall[2]>1)&& c==0) ) && a!=b  )
+		
 		//if( (yoloabs(tableau[clic.x/20][clic.y/20].position.x-player.x)<21) && (yoloabs(tableau[clic.x/20][clic.y/20].position.y-player.y)<21))
 		{
 			
@@ -229,9 +297,22 @@ int main(int argc, char *argv[])
     	return 0;
 }
 
-Point pathfindingMonster(Point p, Point m)
+Point pathfindingMonster(Point p, Point m, Case tab[][],int count,Point countP)
+	/*{
+		if (countP==p)
+		{	
+			return m;
+		}
+		if(countP
+	}*/
 	{
+	/*int c=(m.x/20)-(p.x/20),d=(m.y/20)-(p.y/20);
 	
+	
+	if ( ( (c>=1(tableau[m.x/20][m.y/20].wall[1]>1  )&& d==0) || (c<=-1 && (tableau[m.x/20][m.y/20].wall[3]>1) && d==0) || (d>=1 && (tableau[m.x/20][m.y/20].wall[0]>1  )&& c==0) || (d<=-1 && (tableau[m.x/20][m.y/20].wall[2]>1)&& c==0) ) )
+	{
+		
+	}*/
 	m.x+=((p.x-m.x)>0)?20:(((p.x-m.x)==0)?0:(-20));
 	m.y+=((p.y-m.y)>0)?20:(((p.y-m.y)==0)?0:(-20));
 	
@@ -254,24 +335,24 @@ void Wall (Point p, int wall)
 		p3.y=p.y;
 		p2.x=p.x+19;
 		p2.y=p.y;
-		dessiner_ligne(p2,p3,white);
+		dessiner_ligne(p2,p3,darkblue);
 		break;
 	
 	
-		case 1:
+		case 2:
 		p3.x=p.x;
 		p3.y=p.y+19;
 		p2.x=p.x+19;
 		p2.y=p.y+19;
-		dessiner_ligne(p2,p3,white);
+		dessiner_ligne(p2,p3,darkblue);
 		break;
 
-		case 2:
+		case 1:
 		p2.x=p.x;
 		p2.y=p.y+19;
 		p3.x=p.x;
 		p3.y=p.y;
-		dessiner_ligne(p2,p3,white);
+		dessiner_ligne(p2,p3,darkblue);
 		break;
 
 		case 3:
@@ -279,7 +360,7 @@ void Wall (Point p, int wall)
 		p2.y=p.y;
 		p3.x=p.x+19;
 		p3.y=p.y+19;
-		dessiner_ligne(p2,p3,white);
+		dessiner_ligne(p2,p3,darkblue);
 		break;
 	}
 	
@@ -291,7 +372,7 @@ void Carre(Point p1, Couleur couleur_)
 		Point p2;
 		p2.x= p1.x +1;
 		p2.y=p1.y +1;
-		dessiner_rectangle(p2, 18, 18,couleur_);
+		dessiner_rectangle(p2, 19, 19,couleur_);
 	}
 void quadrillage(int W,int H)
 	{
