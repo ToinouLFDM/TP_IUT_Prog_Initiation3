@@ -3,7 +3,7 @@
 #include<math.h>
 #define W 820
 #define H 600
-#define difficulty 20
+#define difficulty 5
 #define taille_Case 20
 
 typedef struct CASE {
@@ -21,7 +21,7 @@ typedef struct CASE {
 Point init_damier(Case map[][H/taille_Case]);
 
 //fonction calcul inGame
-Point deplacement_player(Case map[][H/taille_Case], Point player );
+Point deplacement_player(Case map[][H/taille_Case], Point player, int *isMoving );
 void Game(Case map[][H/taille_Case], Point p, Point m);
 
 //fonction graphique
@@ -88,61 +88,78 @@ Point init_damier(Case map[][H/taille_Case])
 void Game(Case map[][H/taille_Case], Point p, Point m)
 {
 	int life=1;
-	
+	int isMoving=0;
 	while(life)
 	{
 		//reinitialiser_evenements() ;
-		p=deplacement_player(map,p);
+		printf("is moving %d \n",isMoving );
+		p=deplacement_player(map,p, &isMoving );
+		printf("is moving %d \n",isMoving );
 		actualiser();
 		
 	}
 }
-Point deplacement_player(Case map[][H/taille_Case], Point p )
+Point deplacement_player(Case map[][H/taille_Case], Point p, int *isMoving  )
 {
-	int touche;
+	int touche=0;
 	int pressed=0;
+	if(!*isMoving)
+	{
+		//touche = attendre_touche();
+		//*isMoving=touche;
+	}
 	touche = attendre_touche();
-	if(touche == SDLK_DOWN && !map[p.x][p.y].wall_b && p.y<(H/taille_Case))
+	if(touche == SDLK_DOWN && !map[p.x][p.y].wall_b && p.y<(H/taille_Case) && !*isMoving)
 	{
 		pressed=1;
+		//*isMoving=1;
 		map[p.x][p.y].player=0;
 		graphisme_case(p.x,p.y, map[p.x][p.y].c);
 		p.y+=1;
 		map[p.x][p.y].player=1;
 		graphisme_case(p.x,p.y, darkblue);
 	}
-	if(touche == SDLK_RIGHT && !map[p.x][p.y].wall_r && p.y<(W/taille_Case))
+	if(touche == SDLK_RIGHT && !map[p.x][p.y].wall_r && p.y<(W/taille_Case) && !*isMoving)
 	{
 		pressed=1;
+		//*isMoving=1;
 		map[p.x][p.y].player=0;
 		graphisme_case(p.x,p.y, map[p.x][p.y].c);
 		p.x+=1;
 		map[p.x][p.y].player=1;
 		graphisme_case(p.x,p.y, darkblue);
 	}
-	if(touche == SDLK_UP && !map[p.x][p.y-1].wall_b && p.y>0)
+	if(touche == SDLK_UP && !map[p.x][p.y-1].wall_b && p.y>0 && !*isMoving)
 	{
 		pressed=1;
+		//*isMoving=1;
 		map[p.x][p.y].player=0;
 		graphisme_case(p.x,p.y, map[p.x][p.y].c);
 		p.y-=1;
 		map[p.x][p.y].player=1;
 		graphisme_case(p.x,p.y, darkblue);
 	}
-	if(touche == SDLK_LEFT && !map[p.x-1][p.y].wall_r && p.y>0)
+	if(touche == SDLK_LEFT && !map[p.x-1][p.y].wall_r && p.y>0 && !*isMoving)
 	{
 		pressed=1;
+		//*isMoving=1;
 		map[p.x][p.y].player=0;
 		graphisme_case(p.x,p.y, map[p.x][p.y].c);
 		p.x-=1;
 		map[p.x][p.y].player=1;
 		graphisme_case(p.x,p.y, darkblue);
 	}
-	if (pressed)
+	
+	if (*isMoving)
 	{
-		attente(500);
+		*isMoving=0;
+		attente(200);
 	}
-	 
+	else 
+	{
+		*isMoving=touche;
+		printf("is moving yolo \n" );
+	}
 	return p;
 }
 
@@ -187,7 +204,7 @@ void graphisme_wall(int i, int j, int wall_r, int wall_b)
 void graphisme_damier(Case map[][H/taille_Case])
 {
 	int i=0, j=0;
-	init_ecran(white);
+	init_ecran(gray);
 	while (j<(H/taille_Case))
 	{
 		while(i<(W/taille_Case))
