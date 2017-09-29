@@ -19,7 +19,7 @@ int main()
   int tab[5][5]={0};
   print_tab(tab);
   printf("\n\n\n");
-  rec_path(tab,2,2);
+  rec_path(tab,0,0);
   print_tab(tab);
 }
 
@@ -71,11 +71,13 @@ void rec_path(int tab[][5], int i, int j)
 	if (j+1<5){
 		if (tab[i][j+1] == 0){
 		  tab[i][j+1]=tab[i][j]+1;
+		  rec_path(tab,i,j+1);
 		}
 		else if (tab[i][j+1] > tab[i][j]){
 		  tab[i][j+1]=tab[i][j]+1;
 		  rec_path(tab,i,j+1);
 		}
 	}
+
 
 }
