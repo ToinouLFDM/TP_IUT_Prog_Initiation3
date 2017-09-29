@@ -3,7 +3,7 @@
 #include<math.h>
 #define W 820
 #define H 600
-#define difficulty 5
+#define difficulty 4
 #define taille_Case 20
 
 typedef struct CASE {
@@ -23,6 +23,7 @@ Point init_damier(Case map[][H/taille_Case]);
 //fonction calcul inGame
 Point deplacement_player(Case map[][H/taille_Case], Point player, int *isMoving );
 void Game(Case map[][H/taille_Case], Point p, Point m);
+	//fonction Pathfiniding
 
 //fonction graphique
 void init_ecran(Couleur c);
@@ -92,9 +93,10 @@ void Game(Case map[][H/taille_Case], Point p, Point m)
 	while(life)
 	{
 		//reinitialiser_evenements() ;
-		printf("is moving %d \n",isMoving );
+		//printf("is moving %d \n",isMoving );
 		p=deplacement_player(map,p, &isMoving );
-		printf("is moving %d \n",isMoving );
+		//printf("is moving %d \n",isMoving );	
+
 		actualiser();
 		
 	}
@@ -102,16 +104,10 @@ void Game(Case map[][H/taille_Case], Point p, Point m)
 Point deplacement_player(Case map[][H/taille_Case], Point p, int *isMoving  )
 {
 	int touche=0;
-	int pressed=0;
-	if(!*isMoving)
-	{
-		//touche = attendre_touche();
-		//*isMoving=touche;
-	}
+	
 	touche = attendre_touche();
 	if(touche == SDLK_DOWN && !map[p.x][p.y].wall_b && p.y<(H/taille_Case) && !*isMoving)
 	{
-		pressed=1;
 		//*isMoving=1;
 		map[p.x][p.y].player=0;
 		graphisme_case(p.x,p.y, map[p.x][p.y].c);
@@ -121,7 +117,6 @@ Point deplacement_player(Case map[][H/taille_Case], Point p, int *isMoving  )
 	}
 	if(touche == SDLK_RIGHT && !map[p.x][p.y].wall_r && p.y<(W/taille_Case) && !*isMoving)
 	{
-		pressed=1;
 		//*isMoving=1;
 		map[p.x][p.y].player=0;
 		graphisme_case(p.x,p.y, map[p.x][p.y].c);
@@ -131,7 +126,6 @@ Point deplacement_player(Case map[][H/taille_Case], Point p, int *isMoving  )
 	}
 	if(touche == SDLK_UP && !map[p.x][p.y-1].wall_b && p.y>0 && !*isMoving)
 	{
-		pressed=1;
 		//*isMoving=1;
 		map[p.x][p.y].player=0;
 		graphisme_case(p.x,p.y, map[p.x][p.y].c);
@@ -141,7 +135,6 @@ Point deplacement_player(Case map[][H/taille_Case], Point p, int *isMoving  )
 	}
 	if(touche == SDLK_LEFT && !map[p.x-1][p.y].wall_r && p.y>0 && !*isMoving)
 	{
-		pressed=1;
 		//*isMoving=1;
 		map[p.x][p.y].player=0;
 		graphisme_case(p.x,p.y, map[p.x][p.y].c);
@@ -158,12 +151,12 @@ Point deplacement_player(Case map[][H/taille_Case], Point p, int *isMoving  )
 	else 
 	{
 		*isMoving=touche;
-		printf("is moving yolo \n" );
+		//printf("is moving yolo \n" );
 	}
 	return p;
 }
-
-
+		//fonction Pathfiniding
+		
 
 
 
